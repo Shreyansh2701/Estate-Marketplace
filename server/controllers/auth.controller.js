@@ -20,7 +20,7 @@ const signin = async (req, res, next) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({message: 'User not found'});
+            return res.status(404).json({message: 'User not found', success: false});
         }
         const isMatch = bcrypt.compareSync(password, user.password);
         if (!isMatch) {
@@ -55,4 +55,13 @@ const google = async (req, res, next) => {
     }
 }
 
-module.exports = { signup, signin, google };
+const signout = async (req, res) => {
+    try {
+        res.clearCookie('access_token');
+        res.status(200).json({ message: 'User signed out successfully!' });
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { signup, signin, google, signout };
